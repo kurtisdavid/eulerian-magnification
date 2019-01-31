@@ -10,15 +10,14 @@ def uint8_to_float(img):
 
 def float_to_uint8(img):
     result = np.ndarray(shape=img.shape, dtype='uint8')
-    result[:] = img * 255
+    result[:] = np.clip(img * 255,0,255)
     return result
 
 
 def float_to_int8(img):
     result = np.ndarray(shape=img.shape, dtype='uint8')
-    result[:] = (img * 255) - 127
+    result[:] = np.clip((img * 255) - 127,0,255)
     return result
-
 
 def temporal_bandpass_filter(data, fps, freq_min=0.833, freq_max=1, axis=0, amplification_factor=1):
     print("Applying bandpass between " + str(freq_min) + " and " + str(freq_max) + " Hz")
