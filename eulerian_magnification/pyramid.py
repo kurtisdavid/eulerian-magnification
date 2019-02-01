@@ -1,5 +1,6 @@
 import numpy
 import cv2
+from .transforms import rgb2ntsc,ntsc2rgb
 
 
 def create_gaussian_image_pyramid(image, pyramid_levels):
@@ -35,6 +36,7 @@ def _create_pyramid(video, pyramid_levels, pyramid_fn):
     vid_pyramid = []
     # frame_count, height, width, colors = video.shape
     for frame_number, frame in enumerate(video):
+        frame = rgb2ntsc(frame)
         frame_pyramid = pyramid_fn(frame, pyramid_levels)
 
         for pyramid_level, pyramid_sub_frame in enumerate(frame_pyramid):

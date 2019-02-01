@@ -1,12 +1,24 @@
 import numpy as np
 import scipy
 
+def rgb2ntsc(img):
+    # RGB to YIQ transformation
+    X = img.reshape(-1,3)
+    A = np.array([[0.299,0.587,0.114],[0.596,-.274,-.322],[0.211,-.523,0.312]])
+    ntsc = np.dot(A,X.T).T
+    return ntsc.reshape(img.shape)
+
+def ntsc2rgb(ntsc):
+    # YIQ to RGB transformation
+    X = ntsc.reshape(-1,3)
+    A = np.linalg.inv(np.array([[0.299,0.587,0.114],[0.596,-.274,-.322],[0.211,-.523,0.312]]))
+    img = np.dot(A,X.T).T
+    return img.reshape(ntsc.shape)
 
 def uint8_to_float(img):
     result = np.ndarray(shape=img.shape, dtype='float')
     result[:] = img * (1. / 255)
     return result
-
 
 def float_to_uint8(img):
     result = np.ndarray(shape=img.shape, dtype='uint8')
@@ -32,4 +44,4 @@ def temporal_bandpass_filter(data, fps, freq_min=0.833, freq_max=1, axis=0, ampl
     result = np.ndarray(shape=data.shape, dtype='float')
     result[:] = scipy.fftpack.ifft(fft, axis=0)
     result *= amplification_factor
-    return result
+    return ntsc2rgb(result)
