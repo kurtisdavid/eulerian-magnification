@@ -44,4 +44,4 @@ def temporal_bandpass_filter(data, fps, freq_min=0.833, freq_max=1, axis=0, ampl
     result = np.ndarray(shape=data.shape, dtype='float')
     result[:] = scipy.fftpack.ifft(fft, axis=0)
     result *= amplification_factor
-    return ntsc2rgb(result)
+    return result

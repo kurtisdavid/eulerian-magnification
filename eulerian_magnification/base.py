@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 import scipy.fftpack
 import scipy.signal
-from matplotlib import pyplot
+# from matplotlib import pyplot
 
 # from eulerian_magnification.io import play_vid_data
-from eulerian_magnification.pyramid import create_laplacian_video_pyramid, collapse_laplacian_video_pyramid
+from eulerian_magnification.pyramid import create_laplacian_video_pyramid, collapse_laplacian_video_pyramid, create_gaussian_video_pyramid, collapse_gaussian_video_pyramid
 from eulerian_magnification.transforms import temporal_bandpass_filter
 
 
-def eulerian_magnification(vid_data, fps, freq_min, freq_max, amplification, pyramid_levels=4, skip_levels_at_top=2):
+def eulerian_lpyr_magnification(vid_data, fps, freq_min, freq_max, amplification, pyramid_levels=4, skip_levels_at_top=2):
     vid_pyramid = create_laplacian_video_pyramid(vid_data, pyramid_levels=pyramid_levels)
     for i, vid in enumerate(vid_pyramid):
         if i < skip_levels_at_top or i >= len(vid_pyramid) - 1:
@@ -25,6 +25,20 @@ def eulerian_magnification(vid_data, fps, freq_min, freq_max, amplification, pyr
         # play_vid_data(vid_pyramid[i])
 
     vid_data = collapse_laplacian_video_pyramid(vid_pyramid)
+    return vid_data
+
+def eulerian_gauss_magnification(vid_data, fps, freq_min, freq_max, amplification, pyramid_levels=4, skip_levels_at_top=1):
+    vid_pyramid = create_gaussian_video_pyramid(vid_data, pyramid_levels=pyramid_levels)
+    for i, vid in enumerate(vid_pyramid):
+        print(i)
+        if i < skip_levels_at_top or i>= len(vid_pyramid)-1:
+            print("yeet")
+            continue
+        bandpassed = temporal_bandpass_filter(vid, fps, freq_min=freq_min, freq_max=freq_max, amplification_factor=amplification)
+        # play_vid_data(bandpassed)
+        vid_pyramid[i] += bandpassed
+        # play_vid_data(vid_pyramid[i])
+    vid_data = collapse_gaussian_video_pyramid(vid_pyramid,pyramid_levels)
     return vid_data
 
 
